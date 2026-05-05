@@ -1,0 +1,39 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "quizfy-163bd",
+          "appId": "1:877870867813:android:571b452453406b47f8ed8c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "quizfy-163bd",
+          "configurations": {
+            "android": "1:877870867813:android:571b452453406b47f8ed8c",
+            "ios": "1:877870867813:ios:de02dd6a3f07538ef8ed8c",
+            "macos": "1:877870867813:ios:de02dd6a3f07538ef8ed8c",
+            "web": "1:877870867813:web:d04daa127ed87797f8ed8c",
+            "windows": "1:877870867813:web:bb4793eff851e38ff8ed8c"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

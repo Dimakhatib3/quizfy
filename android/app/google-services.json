@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877870867813",
+    "project_id": "quizfy-163bd",
+    "storage_bucket": "quizfy-163bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877870867813:android:571b452453406b47f8ed8c",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKyeMdOdCpzrdhPlxUioWGAFbJzTgnUtU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
