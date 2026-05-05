@@ -22,7 +22,7 @@ class _QuizPageState extends State<QuizPage> {
 
     selectedAnswers = List<String?>.filled(widget.questions.length, null);
 
-    // Shuffle options ONCE
+    // Shuffle options ONCE  
     shuffledOptions = widget.questions.map((q) {
       final options = List<String>.from(q.options);
       options.shuffle();
@@ -30,11 +30,15 @@ class _QuizPageState extends State<QuizPage> {
     }).toList();
   }
 
-  void selectAnswer(String option) {
-    setState(() {
-      selectedAnswers[currentIndex] = option;
-    });
-  }
+ void selectAnswer(String option) {
+  setState(() {
+    selectedAnswers[currentIndex] = option;
+
+    widget.questions[currentIndex].selectedAnswer = option;
+    widget.questions[currentIndex].isCorrect =
+        option == widget.questions[currentIndex].answer;
+  });
+}
 
   void nextQuestion() {
     if (currentIndex < widget.questions.length - 1) {

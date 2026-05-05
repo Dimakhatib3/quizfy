@@ -3,10 +3,16 @@ class Question {
   final List<String> options;
   final String answer;
 
+  // NEW 👇
+  String? selectedAnswer;
+  bool? isCorrect;
+
   Question({
     required this.question,
     required this.options,
     required this.answer,
+    this.selectedAnswer,
+    this.isCorrect,
   });
 
   factory Question.fromJson(Map<String, dynamic> json) {
@@ -21,6 +27,10 @@ class Question {
       question: (json['question'] ?? '').toString(),
       options: parsedOptions,
       answer: (json['answer'] ?? json['correctAnswer'] ?? '').toString(),
+
+      // NEW 👇 (safe for old data)
+      selectedAnswer: json['selectedAnswer'],
+      isCorrect: json['isCorrect'],
     );
   }
 
@@ -29,6 +39,10 @@ class Question {
       'question': question,
       'options': options,
       'answer': answer,
+
+      // NEW 👇
+      'selectedAnswer': selectedAnswer,
+      'isCorrect': isCorrect,
     };
   }
 }
