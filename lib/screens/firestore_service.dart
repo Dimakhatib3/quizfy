@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/quiz_history_item.dart';
+import '../models/question.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -12,11 +13,20 @@ class FirestoreService {
     await _db.collection('quizzes').doc(quiz.id).set(quiz.toJson());
   }
 
+  Future<void> updateQuizQuestions(
+    String quizId,
+    List<Question> questions,
+  ) async {
+    await _db.collection('quizzes').doc(quizId).update({
+      'questions': questions.map((q) => q.toJson()).toList(),
+    });
+  }
+
   Future<List<QuizHistoryItem>> loadHistory() async {
     final userId = currentUserId;
     if (userId == null) return [];
 
-print("CURRENT USER ID: $userId");
+    print("CURRENT USER ID: $userId");
 
     final snapshot = await _db
         .collection('quizzes')
@@ -24,7 +34,7 @@ print("CURRENT USER ID: $userId");
         .orderBy('createdAt', descending: true)
         .get();
 
-        print("DOC COUNT: ${snapshot.docs.length}");
+    print("DOC COUNT: ${snapshot.docs.length}");
 
     return snapshot.docs
         .map((doc) => QuizHistoryItem.fromJson(doc.data()))

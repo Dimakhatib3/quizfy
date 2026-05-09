@@ -148,7 +148,10 @@ class _GenerateQuizPageState extends State<GenerateQuizPage> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => QuizPage(questions: questions)),
+        MaterialPageRoute(
+          builder: (context) =>
+              QuizPage(questions: questions, quizId: historyItem.id),
+        ),
       );
     } catch (e) {
       if (!mounted) return;

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import '../models/question.dart';
+import 'firestore_service.dart';
 
 class QuizPage extends StatefulWidget {
   final List<Question> questions;
+  final String quizId;
 
-  const QuizPage({super.key, required this.questions});
+  const QuizPage({
+    super.key,
+    required this.questions,
+    required this.quizId,
+  });
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -22,7 +28,6 @@ class _QuizPageState extends State<QuizPage> {
 
     selectedAnswers = List<String?>.filled(widget.questions.length, null);
 
-    // Shuffle options ONCE  
     shuffledOptions = widget.questions.map((q) {
       final options = List<String>.from(q.options);
       options.shuffle();
@@ -30,15 +35,15 @@ class _QuizPageState extends State<QuizPage> {
     }).toList();
   }
 
- void selectAnswer(String option) {
-  setState(() {
-    selectedAnswers[currentIndex] = option;
+  void selectAnswer(String option) {
+    setState(() {
+      selectedAnswers[currentIndex] = option;
 
-    widget.questions[currentIndex].selectedAnswer = option;
-    widget.questions[currentIndex].isCorrect =
-        option == widget.questions[currentIndex].answer;
-  });
-}
+      widget.questions[currentIndex].selectedAnswer = option;
+      widget.questions[currentIndex].isCorrect =
+          option == widget.questions[currentIndex].answer;
+    });
+  }
 
   void nextQuestion() {
     if (currentIndex < widget.questions.length - 1) {
@@ -99,8 +104,13 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  void showResult() {
+  void showResult() async {
     final score = calculateScore();
+
+    await FirestoreService().updateQuizQuestions(
+      widget.quizId,
+      widget.questions,
+    );
 
     showDialog(
       context: context,
@@ -140,7 +150,6 @@ class _QuizPageState extends State<QuizPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top info
             Text(
               "Question ${currentIndex + 1} / ${widget.questions.length}",
               style: const TextStyle(
@@ -149,7 +158,9 @@ class _QuizPageState extends State<QuizPage> {
                 color: Colors.deepPurple,
               ),
             ),
+
             const SizedBox(height: 5),
+
             Text(
               "Answered: ${answeredCount()}",
               style: const TextStyle(color: Colors.deepPurple),
@@ -157,7 +168,6 @@ class _QuizPageState extends State<QuizPage> {
 
             const SizedBox(height: 20),
 
-            // Question box
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(18),
@@ -177,7 +187,6 @@ class _QuizPageState extends State<QuizPage> {
 
             const SizedBox(height: 20),
 
-            // Options
             Expanded(
               child: ListView.builder(
                 itemCount: options.length,
@@ -223,7 +232,6 @@ class _QuizPageState extends State<QuizPage> {
 
             const SizedBox(height: 10),
 
-            // Buttons
             Row(
               children: [
                 Expanded(
@@ -244,7 +252,9 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                   ),
                 ),
+
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: ElevatedButton(
                     onPressed: nextQuestion,
