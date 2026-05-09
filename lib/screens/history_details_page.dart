@@ -36,6 +36,7 @@ class HistoryDetailsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Question
                 Text(
                   "Q${index + 1}: ${question.question}",
                   style: const TextStyle(
@@ -44,27 +45,61 @@ class HistoryDetailsPage extends StatelessWidget {
                     color: Colors.deepPurple,
                   ),
                 ),
+
                 const SizedBox(height: 12),
-                ...question.options.map(
-                  (option) => Padding(
+
+                // Options
+                ...question.options.map((option) {
+                  final isCorrectOption = option == question.answer;
+                  final isUserSelected = option == question.selectedAnswer;
+
+                  Color textColor = Colors.deepPurple;
+                  FontWeight weight = FontWeight.normal;
+
+                  if (isCorrectOption) {
+                    textColor = Colors.green.shade800;
+                    weight = FontWeight.bold;
+                  }
+
+                  if (isUserSelected && !isCorrectOption) {
+                    textColor = Colors.red;
+                    weight = FontWeight.bold;
+                  }
+
+                  return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Text(
-                      option == question.answer
+                      isCorrectOption
                           ? "✓ $option"
-                          : option,
+                          : isUserSelected
+                              ? "✗ $option"
+                              : option,
                       style: TextStyle(
                         fontSize: 15,
-                        color: option == question.answer
-                            ? Colors.green.shade800
-                            : Colors.deepPurple,
-                        fontWeight: option == question.answer
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        color: textColor,
+                        fontWeight: weight,
                       ),
                     ),
+                  );
+                }),
+
+                const SizedBox(height: 10),
+
+                // Your Answer
+                Text(
+                  "Your Answer: ${question.selectedAnswer ?? "Not answered"}",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: question.isCorrect == true
+                        ? Colors.green
+                        : Colors.red,
                   ),
                 ),
-                const SizedBox(height: 8),
+
+                const SizedBox(height: 4),
+
+                // Correct Answer
                 Text(
                   "Correct Answer: ${question.answer}",
                   style: TextStyle(

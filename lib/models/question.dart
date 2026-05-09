@@ -3,7 +3,7 @@ class Question {
   final List<String> options;
   final String answer;
 
-  // NEW 👇
+
   String? selectedAnswer;
   bool? isCorrect;
 
@@ -28,7 +28,7 @@ class Question {
       options: parsedOptions,
       answer: (json['answer'] ?? json['correctAnswer'] ?? '').toString(),
 
-      // NEW 👇 (safe for old data)
+  
       selectedAnswer: json['selectedAnswer'],
       isCorrect: json['isCorrect'],
     );
@@ -40,7 +40,7 @@ class Question {
       'options': options,
       'answer': answer,
 
-      // NEW 👇
+
       'selectedAnswer': selectedAnswer,
       'isCorrect': isCorrect,
     };
