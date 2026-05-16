@@ -31,10 +31,14 @@ Only ONE option must be correct.
         typeInstructions = `
 Generate ONLY true/false questions.
 Do NOT generate any multiple choice questions.
-Each question must have exactly these 2 options only:
-["True", "False"]
-Do NOT repeat options.
-Do NOT use 4 options.
+Each question must have exactly 2 options only.
+The true/false words MUST be in the SAME language as the uploaded text.
+Examples:
+Arabic: صحيح / خطأ
+Turkish: Doğru / Yanlış
+French: Vrai / Faux
+English: True / False
+Do NOT use English unless the uploaded text is English.
 `;
       } else {
         typeInstructions = `
@@ -42,8 +46,8 @@ Generate a mix of multiple choice and true/false questions.
 
 Rules:
 - Multiple choice questions must have exactly 4 different options.
-- True/false questions must have exactly these 2 options only:
-  ["True", "False"]
+- True/false questions must use the SAME language as the uploaded text.
+- Do NOT use English true/false unless the uploaded text is English.
 - Do NOT repeat options.
 `;
       }
@@ -51,14 +55,17 @@ Rules:
       const prompt = `
 Generate a ${difficulty} level quiz from this text.
 
-IMPORTANT LANGUAGE RULES:
-- Detect the language of the input text automatically.
-- Generate ALL questions, options, and answers in the SAME language as the input text.
-- Do NOT switch languages.
-- If the text is Arabic, the quiz must be fully in Arabic.
-- If the text is Turkish, the quiz must be fully in Turkish.
-- If the text is French, the quiz must be fully in French.
-- This rule applies to ANY language in the uploaded text.
+VERY IMPORTANT LANGUAGE RULES:
+- Detect the language of the uploaded text automatically.
+- Generate EVERYTHING in the SAME language as the uploaded text.
+- Questions must match the same language.
+- Options must match the same language.
+- Answers must match the same language.
+- NEVER mix languages.
+- If uploaded text is Arabic, everything must be Arabic.
+- If uploaded text is Turkish, everything must be Turkish.
+- If uploaded text is French, everything must be French.
+- This applies to ANY language.
 
 QUIZ SETTINGS:
 - Number of questions: ${questionCount}
@@ -67,34 +74,27 @@ QUIZ SETTINGS:
 ${typeInstructions}
 
 DIFFICULTY RULES:
-- Easy: simple direct questions
-- Medium: moderate understanding
-- Hard: deeper and more challenging questions
+- Easy = simple direct questions
+- Medium = moderate understanding
+- Hard = deeper understanding
 
 OUTPUT RULES:
 - Return ONLY valid JSON
-- Do NOT add explanation
-- Do NOT add markdown
-- Do NOT add code fences
-- The "answer" must exactly match one item from "options"
-- Do NOT mix question types unless selected type is "Both"
+- No markdown
+- No explanation
+- No code blocks
+- The answer must exactly match one option
 
-Return in this exact JSON format:
+JSON format:
 [
   {
     "question": "...",
-    "options": ["...", "...", "...", "..."],
+    "options": ["...", "..."],
     "answer": "..."
   }
 ]
 
-IMPORTANT FORMAT RULES:
-- If the question is True/False, options must be exactly 2 items only, in the same language as the input text
-- If the question is Multiple Choice, options must be exactly 4 items
-- All options must be different
-- The answer must exactly match one option
-
-Text:
+TEXT:
 ${text}
 `;
 
