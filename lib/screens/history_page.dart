@@ -16,6 +16,10 @@ class _HistoryPageState extends State<HistoryPage> {
   bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +35,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> loadHistory() async {
     final loaded = await FirestoreService().loadHistory();
+
     setState(() {
       history = loaded;
       filteredHistory = loaded;
@@ -44,11 +49,78 @@ class _HistoryPageState extends State<HistoryPage> {
     setState(() {
       if (query.isEmpty) {
         filteredHistory = history;
-      } else {
-        filteredHistory = history.where((item) {
-          return item.title.toLowerCase().contains(query);
-        }).toList();
+        return;
       }
+
+      filteredHistory = history.where((item) {
+        final title = item.title.toLowerCase();
+        final difficulty = item.difficulty.toLowerCase();
+        final type = item.questionType.toLowerCase();
+        final fileName = item.fileName.toLowerCase();
+        final date =
+            "${item.createdAt.day}/${item.createdAt.month}/${item.createdAt.year}";
+
+        final language =
+            item.questions.isNotEmpty &&
+                    isArabic(item.questions.first.question)
+                ? "arabic"
+                : "english";
+
+        bool matches = true;
+
+        if (query.contains("most difficult") || query.contains("hard")) {
+          matches = matches && difficulty == "hard";
+        }
+
+        if (query.contains("easy")) {
+          matches = matches && difficulty == "easy";
+        }
+
+        if (query.contains("medium")) {
+          matches = matches && difficulty == "medium";
+        }
+
+        if (query.contains("arabic")) {
+          matches = matches && language == "arabic";
+        }
+
+        if (query.contains("english")) {
+          matches = matches && language == "english";
+        }
+
+        if (query.contains("true false")) {
+          matches = matches && type.contains("true");
+        }
+
+        if (query.contains("multiple choice")) {
+          matches = matches && type.contains("multiple");
+        }
+
+        if (query.contains("both")) {
+          matches = matches && type.contains("both");
+        }
+
+        if (RegExp(r'\d{1,2}/\d{1,2}/\d{4}').hasMatch(query)) {
+          matches = matches && date.contains(query);
+        }
+
+        final generalMatch =
+            title.contains(query) ||
+            fileName.contains(query) ||
+            date.contains(query);
+
+        return matches &&
+            (generalMatch ||
+                query.contains("hard") ||
+                query.contains("easy") ||
+                query.contains("medium") ||
+                query.contains("arabic") ||
+                query.contains("english") ||
+                query.contains("true false") ||
+                query.contains("multiple choice") ||
+                query.contains("both") ||
+                query.contains("most difficult"));
+      }).toList();
     });
   }
 
@@ -82,7 +154,9 @@ class _HistoryPageState extends State<HistoryPage> {
 
               if (newTitle.isNotEmpty) {
                 await FirestoreService().renameQuiz(item.id, newTitle);
+
                 if (!mounted) return;
+
                 Navigator.pop(context);
                 await loadHistory();
               }
@@ -288,7 +362,8 @@ class _HistoryPageState extends State<HistoryPage> {
                     child: TextField(
                       controller: searchController,
                       decoration: InputDecoration(
-                        hintText: "Search quiz name...",
+                        hintText:
+                            "Search by title, date, difficulty, language...",
                         prefixIcon: const Icon(Icons.search),
                         filled: true,
                         fillColor: const Color(0xFFF3F3B0),
@@ -327,4 +402,4 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
     );
   }
-} 
+}
