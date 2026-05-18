@@ -6,11 +6,7 @@ class QuizPage extends StatefulWidget {
   final List<Question> questions;
   final String quizId;
 
-  const QuizPage({
-    super.key,
-    required this.questions,
-    required this.quizId,
-  });
+  const QuizPage({super.key, required this.questions, required this.quizId});
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -155,8 +151,9 @@ class _QuizPageState extends State<QuizPage> {
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment:
-                arabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: arabic
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               Text(
                 "Question ${currentIndex + 1} / ${widget.questions.length}",
@@ -228,8 +225,7 @@ class _QuizPageState extends State<QuizPage> {
                         activeColor: Colors.deepPurple,
                         title: Text(
                           option,
-                          textAlign:
-                              arabic ? TextAlign.right : TextAlign.left,
+                          textAlign: arabic ? TextAlign.right : TextAlign.left,
                           style: const TextStyle(
                             color: Colors.deepPurple,
                             fontSize: 16,
@@ -247,19 +243,40 @@ class _QuizPageState extends State<QuizPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed:
-                          currentIndex == 0 ? null : previousQuestion,
-                      child: const Text("Back"),
+                      onPressed: currentIndex == 0 ? null : previousQuestion,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF3F3B0),
+                        foregroundColor: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        "Back",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+
                   const SizedBox(width: 12),
+
                   Expanded(
                     child: ElevatedButton(
                       onPressed: nextQuestion,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF3F3B0),
+                        foregroundColor: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
                       child: Text(
                         currentIndex == widget.questions.length - 1
                             ? "Finish"
-                            : "Next",
+                            : "Next / Skip",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
