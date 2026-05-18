@@ -53,56 +53,42 @@ class HistoryDetailsPage extends StatelessWidget {
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: arabic
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
-                    children: arabic
-                        ? [
-                            Flexible(
-                              child: Text(
-                                question.question,
-                                textAlign: TextAlign.right,
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple,
-                                ),
-                              ),
+                  Align(
+                    alignment: arabic
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      textDirection: arabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      children: [
+                        Text(
+                          arabic ? "س${index + 1}" : "Q${index + 1}:",
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        Flexible(
+                          child: Text(
+                            question.question,
+                            textAlign: arabic
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "س${index + 1}",
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                            ),
-                          ]
-                        : [
-                            Text(
-                              "Q${index + 1}:",
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                question.question,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                   const SizedBox(height: 12),
