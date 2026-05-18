@@ -12,44 +12,45 @@ class HistoryDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arabic = quizItem.questions.isNotEmpty
-        ? isArabic(quizItem.questions.first.question)
-        : false;
-
-    return Directionality(
-      textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFE6C7E8),
-        appBar: AppBar(
-          title: Text(
-            quizItem.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: const Color(0xFFE6C7E8),
+      appBar: AppBar(
+        title: Text(
+          quizItem.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: quizItem.questions.length,
-          itemBuilder: (context, index) {
-            final question = quizItem.questions[index];
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: quizItem.questions.length,
+        itemBuilder: (context, index) {
+          final question = quizItem.questions[index];
+          final arabic = isArabic(question.question);
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3F3B0),
-                borderRadius: BorderRadius.circular(18),
-              ),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F3B0),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Directionality(
+              textDirection:
+                  arabic ? TextDirection.rtl : TextDirection.ltr,
               child: Column(
                 crossAxisAlignment:
-                    arabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    arabic
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Q${index + 1}: ${question.question}",
-                    textAlign: arabic ? TextAlign.right : TextAlign.left,
+                    textAlign:
+                        arabic ? TextAlign.right : TextAlign.left,
                     style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -61,7 +62,8 @@ class HistoryDetailsPage extends StatelessWidget {
 
                   ...question.options.map((option) {
                     final isCorrectOption = option == question.answer;
-                    final isUserSelected = option == question.selectedAnswer;
+                    final isUserSelected =
+                        option == question.selectedAnswer;
 
                     Color textColor = Colors.deepPurple;
                     FontWeight weight = FontWeight.normal;
@@ -85,7 +87,9 @@ class HistoryDetailsPage extends StatelessWidget {
                                 ? "✗ $option"
                                 : option,
                         textAlign:
-                            arabic ? TextAlign.right : TextAlign.left,
+                            arabic
+                                ? TextAlign.right
+                                : TextAlign.left,
                         style: TextStyle(
                           fontSize: 15,
                           color: textColor,
@@ -99,7 +103,8 @@ class HistoryDetailsPage extends StatelessWidget {
 
                   Text(
                     "Your Answer: ${question.selectedAnswer ?? "Not answered"}",
-                    textAlign: arabic ? TextAlign.right : TextAlign.left,
+                    textAlign:
+                        arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -113,7 +118,8 @@ class HistoryDetailsPage extends StatelessWidget {
 
                   Text(
                     "Correct Answer: ${question.answer}",
-                    textAlign: arabic ? TextAlign.right : TextAlign.left,
+                    textAlign:
+                        arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -122,9 +128,9 @@ class HistoryDetailsPage extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

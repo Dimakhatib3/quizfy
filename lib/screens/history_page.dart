@@ -61,10 +61,9 @@ class _HistoryPageState extends State<HistoryPage> {
             "${item.createdAt.day}/${item.createdAt.month}/${item.createdAt.year}";
 
         final language =
-            item.questions.isNotEmpty &&
-                    isArabic(item.questions.first.question)
-                ? "arabic"
-                : "english";
+            item.questions.isNotEmpty && isArabic(item.questions.first.question)
+            ? "arabic"
+            : "english";
 
         bool matches = true;
 
@@ -72,10 +71,12 @@ class _HistoryPageState extends State<HistoryPage> {
         if (query.contains("most difficult") ||
             query.contains("hardest") ||
             query.contains("hard")) {
-          final hasHard =
-              history.any((q) => q.difficulty.toLowerCase() == "hard");
-          final hasMedium =
-              history.any((q) => q.difficulty.toLowerCase() == "medium");
+          final hasHard = history.any(
+            (q) => q.difficulty.toLowerCase() == "hard",
+          );
+          final hasMedium = history.any(
+            (q) => q.difficulty.toLowerCase() == "medium",
+          );
 
           if (hasHard) {
             matches = matches && difficulty == "hard";
@@ -89,10 +90,12 @@ class _HistoryPageState extends State<HistoryPage> {
         if (query.contains("easiest") ||
             query.contains("easy") ||
             query.contains("simple")) {
-          final hasEasy =
-              history.any((q) => q.difficulty.toLowerCase() == "easy");
-          final hasMedium =
-              history.any((q) => q.difficulty.toLowerCase() == "medium");
+          final hasEasy = history.any(
+            (q) => q.difficulty.toLowerCase() == "easy",
+          );
+          final hasMedium = history.any(
+            (q) => q.difficulty.toLowerCase() == "medium",
+          );
 
           if (hasEasy) {
             matches = matches && difficulty == "easy";
@@ -111,7 +114,8 @@ class _HistoryPageState extends State<HistoryPage> {
         final now = DateTime.now();
 
         if (query.contains("today")) {
-          matches = matches &&
+          matches =
+              matches &&
               item.createdAt.day == now.day &&
               item.createdAt.month == now.month &&
               item.createdAt.year == now.year;
@@ -120,7 +124,8 @@ class _HistoryPageState extends State<HistoryPage> {
         if (query.contains("yesterday")) {
           final yesterday = now.subtract(const Duration(days: 1));
 
-          matches = matches &&
+          matches =
+              matches &&
               item.createdAt.day == yesterday.day &&
               item.createdAt.month == yesterday.month &&
               item.createdAt.year == yesterday.year;
@@ -132,7 +137,8 @@ class _HistoryPageState extends State<HistoryPage> {
         }
 
         if (query.contains("this month")) {
-          matches = matches &&
+          matches =
+              matches &&
               item.createdAt.month == now.month &&
               item.createdAt.year == now.year;
         }
@@ -287,9 +293,7 @@ class _HistoryPageState extends State<HistoryPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => HistoryDetailsPage(quizItem: item),
-          ),
+          MaterialPageRoute(builder: (_) => HistoryDetailsPage(quizItem: item)),
         );
       },
       child: Container(
@@ -305,9 +309,7 @@ class _HistoryPageState extends State<HistoryPage> {
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(
-            color: Colors.deepPurple.withValues(alpha: 0.10),
-          ),
+          border: Border.all(color: Colors.deepPurple.withValues(alpha: 0.10)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,19 +379,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   const SizedBox(height: 8),
                   const Text(
                     "Tap to view questions and answers",
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.black54, fontSize: 13),
                   ),
                 ],
               ),
             ),
             PopupMenuButton<String>(
-              icon: const Icon(
-                Icons.more_vert,
-                color: Colors.deepPurple,
-              ),
+              icon: const Icon(Icons.more_vert, color: Colors.deepPurple),
               onSelected: (value) async {
                 if (value == "rename") {
                   await renameQuiz(item);
@@ -398,14 +394,8 @@ class _HistoryPageState extends State<HistoryPage> {
                 }
               },
               itemBuilder: (context) => const [
-                PopupMenuItem(
-                  value: "rename",
-                  child: Text("Rename"),
-                ),
-                PopupMenuItem(
-                  value: "delete",
-                  child: Text("Delete"),
-                ),
+                PopupMenuItem(value: "rename", child: Text("Rename")),
+                PopupMenuItem(value: "delete", child: Text("Delete")),
               ],
             ),
           ],
@@ -423,6 +413,57 @@ class _HistoryPageState extends State<HistoryPage> {
         centerTitle: true,
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.sort),
+            onSelected: (value) {
+              setState(() {
+                if (value == "latest") {
+                  filteredHistory.sort(
+                    (a, b) => b.createdAt.compareTo(a.createdAt),
+                  );
+                }
+
+                if (value == "oldest") {
+                  filteredHistory.sort(
+                    (a, b) => a.createdAt.compareTo(b.createdAt),
+                  );
+                }
+
+                if (value == "hard") {
+                  filteredHistory.sort((a, b) {
+                    const order = {"hard": 0, "medium": 1, "easy": 2};
+
+                    return (order[a.difficulty.toLowerCase()] ?? 99).compareTo(
+                      order[b.difficulty.toLowerCase()] ?? 99,
+                    );
+                  });
+                }
+
+                if (value == "easy") {
+                  filteredHistory.sort((a, b) {
+                    const order = {"easy": 0, "medium": 1, "hard": 2};
+
+                    return (order[a.difficulty.toLowerCase()] ?? 99).compareTo(
+                      order[b.difficulty.toLowerCase()] ?? 99,
+                    );
+                  });
+                }
+
+                if (value == "reset") {
+                  filteredHistory = List.from(history);
+                }
+              });
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: "latest", child: Text("Latest First")),
+              PopupMenuItem(value: "oldest", child: Text("Oldest First")),
+              PopupMenuItem(value: "hard", child: Text("Hard First")),
+              PopupMenuItem(value: "easy", child: Text("Easy First")),
+              PopupMenuItem(value: "reset", child: Text("Reset")),
+            ],
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
