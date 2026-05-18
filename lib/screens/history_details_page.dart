@@ -4,10 +4,7 @@ import '../models/quiz_history_item.dart';
 class HistoryDetailsPage extends StatelessWidget {
   final QuizHistoryItem quizItem;
 
-  const HistoryDetailsPage({
-    super.key,
-    required this.quizItem,
-  });
+  const HistoryDetailsPage({super.key, required this.quizItem});
 
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
@@ -34,14 +31,13 @@ class HistoryDetailsPage extends StatelessWidget {
           final question = quizItem.questions[index];
           final arabic = isArabic(question.question);
 
-          final yourAnswerLabel =
-              arabic ? "إجابتك" : "Your Answer";
+          final yourAnswerLabel = arabic ? "إجابتك" : "Your Answer";
 
-          final correctAnswerLabel =
-              arabic ? "الإجابة الصحيحة" : "Correct Answer";
+          final correctAnswerLabel = arabic
+              ? "الإجابة الصحيحة"
+              : "Correct Answer";
 
-          final notAnswered =
-              arabic ? "لم تتم الإجابة" : "Not answered";
+          final notAnswered = arabic ? "لم تتم الإجابة" : "Not answered";
 
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
@@ -51,40 +47,69 @@ class HistoryDetailsPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
             ),
             child: Directionality(
-              textDirection:
-                  arabic ? TextDirection.rtl : TextDirection.ltr,
+              textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
               child: Column(
-                crossAxisAlignment:
-                    arabic
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
+                crossAxisAlignment: arabic
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    textAlign:
-                        arabic ? TextAlign.right : TextAlign.left,
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: arabic
-                              ? "${question.question} :س${index + 1}"
-                              : "Q${index + 1}: ${question.question}",
-                        ),
-                      ],
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: arabic
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
+                    children: arabic
+                        ? [
+                            Flexible(
+                              child: Text(
+                                question.question,
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "س${index + 1}",
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                          ]
+                        : [
+                            Text(
+                              "Q${index + 1}:",
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                question.question,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
+                                ),
+                              ),
+                            ),
+                          ],
                   ),
 
                   const SizedBox(height: 12),
 
                   ...question.options.map((option) {
-                    final isCorrectOption =
-                        option == question.answer;
-                    final isUserSelected =
-                        option == question.selectedAnswer;
+                    final isCorrectOption = option == question.answer;
+                    final isUserSelected = option == question.selectedAnswer;
 
                     Color textColor = Colors.deepPurple;
                     FontWeight weight = FontWeight.normal;
@@ -103,16 +128,10 @@ class HistoryDetailsPage extends StatelessWidget {
                     }
 
                     return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
-                        arabic
-                            ? "$option $prefix"
-                            : "$prefix$option",
-                        textAlign:
-                            arabic
-                                ? TextAlign.right
-                                : TextAlign.left,
+                        arabic ? "$option $prefix" : "$prefix$option",
+                        textAlign: arabic ? TextAlign.right : TextAlign.left,
                         style: TextStyle(
                           fontSize: 15,
                           color: textColor,
@@ -126,8 +145,7 @@ class HistoryDetailsPage extends StatelessWidget {
 
                   Text(
                     "$yourAnswerLabel: ${question.selectedAnswer ?? notAnswered}",
-                    textAlign:
-                        arabic ? TextAlign.right : TextAlign.left,
+                    textAlign: arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -141,8 +159,7 @@ class HistoryDetailsPage extends StatelessWidget {
 
                   Text(
                     "$correctAnswerLabel: ${question.answer}",
-                    textAlign:
-                        arabic ? TextAlign.right : TextAlign.left,
+                    textAlign: arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
