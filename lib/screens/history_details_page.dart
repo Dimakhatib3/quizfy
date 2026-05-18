@@ -4,7 +4,10 @@ import '../models/quiz_history_item.dart';
 class HistoryDetailsPage extends StatelessWidget {
   final QuizHistoryItem quizItem;
 
-  const HistoryDetailsPage({super.key, required this.quizItem});
+  const HistoryDetailsPage({
+    super.key,
+    required this.quizItem,
+  });
 
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
@@ -31,6 +34,15 @@ class HistoryDetailsPage extends StatelessWidget {
           final question = quizItem.questions[index];
           final arabic = isArabic(question.question);
 
+          final yourAnswerLabel =
+              arabic ? "إجابتك" : "Your Answer";
+
+          final correctAnswerLabel =
+              arabic ? "الإجابة الصحيحة" : "Correct Answer";
+
+          final notAnswered =
+              arabic ? "لم تتم الإجابة" : "Not answered";
+
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
@@ -47,45 +59,56 @@ class HistoryDetailsPage extends StatelessWidget {
                         ? CrossAxisAlignment.end
                         : CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Q${index + 1}: ${question.question}",
+                  RichText(
                     textAlign:
                         arabic ? TextAlign.right : TextAlign.left,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: arabic
+                              ? "${question.question} :س${index + 1}"
+                              : "Q${index + 1}: ${question.question}",
+                        ),
+                      ],
                     ),
                   ),
 
                   const SizedBox(height: 12),
 
                   ...question.options.map((option) {
-                    final isCorrectOption = option == question.answer;
+                    final isCorrectOption =
+                        option == question.answer;
                     final isUserSelected =
                         option == question.selectedAnswer;
 
                     Color textColor = Colors.deepPurple;
                     FontWeight weight = FontWeight.normal;
+                    String prefix = "";
 
                     if (isCorrectOption) {
                       textColor = Colors.green.shade800;
                       weight = FontWeight.bold;
+                      prefix = "✓ ";
                     }
 
                     if (isUserSelected && !isCorrectOption) {
                       textColor = Colors.red;
                       weight = FontWeight.bold;
+                      prefix = "✗ ";
                     }
 
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding:
+                          const EdgeInsets.only(bottom: 8),
                       child: Text(
-                        isCorrectOption
-                            ? "✓ $option"
-                            : isUserSelected
-                                ? "✗ $option"
-                                : option,
+                        arabic
+                            ? "$option $prefix"
+                            : "$prefix$option",
                         textAlign:
                             arabic
                                 ? TextAlign.right
@@ -97,12 +120,12 @@ class HistoryDetailsPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }),
+                  }).toList(),
 
                   const SizedBox(height: 10),
 
                   Text(
-                    "Your Answer: ${question.selectedAnswer ?? "Not answered"}",
+                    "$yourAnswerLabel: ${question.selectedAnswer ?? notAnswered}",
                     textAlign:
                         arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
@@ -117,7 +140,7 @@ class HistoryDetailsPage extends StatelessWidget {
                   const SizedBox(height: 4),
 
                   Text(
-                    "Correct Answer: ${question.answer}",
+                    "$correctAnswerLabel: ${question.answer}",
                     textAlign:
                         arabic ? TextAlign.right : TextAlign.left,
                     style: TextStyle(
