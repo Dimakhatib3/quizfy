@@ -115,13 +115,18 @@ class HistoryDetailsPage extends StatelessWidget {
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        arabic ? "$option $prefix" : "$prefix$option",
-                        textAlign: arabic ? TextAlign.right : TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: textColor,
-                          fontWeight: weight,
+                      child: Align(
+                        alignment: arabic
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Text(
+                          arabic ? "$option $prefix" : "$prefix$option",
+                          textAlign: arabic ? TextAlign.right : TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: textColor,
+                            fontWeight: weight,
+                          ),
                         ),
                       ),
                     );
