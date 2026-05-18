@@ -52,7 +52,7 @@ class _HistoryPageState extends State<HistoryPage> {
         return;
       }
 
-      filteredHistory = history.where((item) {
+      List<QuizHistoryItem> results = history.where((item) {
         final title = item.title.toLowerCase();
         final difficulty = item.difficulty.toLowerCase();
         final type = item.questionType.toLowerCase();
@@ -68,18 +68,76 @@ class _HistoryPageState extends State<HistoryPage> {
 
         bool matches = true;
 
-        if (query.contains("most difficult") || query.contains("hard")) {
-          matches = matches && difficulty == "hard";
+        // SMART DIFFICULTY
+        if (query.contains("most difficult") ||
+            query.contains("hardest") ||
+            query.contains("hard")) {
+          final hasHard =
+              history.any((q) => q.difficulty.toLowerCase() == "hard");
+          final hasMedium =
+              history.any((q) => q.difficulty.toLowerCase() == "medium");
+
+          if (hasHard) {
+            matches = matches && difficulty == "hard";
+          } else if (hasMedium) {
+            matches = matches && difficulty == "medium";
+          } else {
+            matches = matches && difficulty == "easy";
+          }
         }
 
-        if (query.contains("easy")) {
-          matches = matches && difficulty == "easy";
+        if (query.contains("easiest") ||
+            query.contains("easy") ||
+            query.contains("simple")) {
+          final hasEasy =
+              history.any((q) => q.difficulty.toLowerCase() == "easy");
+          final hasMedium =
+              history.any((q) => q.difficulty.toLowerCase() == "medium");
+
+          if (hasEasy) {
+            matches = matches && difficulty == "easy";
+          } else if (hasMedium) {
+            matches = matches && difficulty == "medium";
+          } else {
+            matches = matches && difficulty == "hard";
+          }
         }
 
         if (query.contains("medium")) {
           matches = matches && difficulty == "medium";
         }
 
+        // SMART DATE
+        final now = DateTime.now();
+
+        if (query.contains("today")) {
+          matches = matches &&
+              item.createdAt.day == now.day &&
+              item.createdAt.month == now.month &&
+              item.createdAt.year == now.year;
+        }
+
+        if (query.contains("yesterday")) {
+          final yesterday = now.subtract(const Duration(days: 1));
+
+          matches = matches &&
+              item.createdAt.day == yesterday.day &&
+              item.createdAt.month == yesterday.month &&
+              item.createdAt.year == yesterday.year;
+        }
+
+        if (query.contains("this week")) {
+          final daysDifference = now.difference(item.createdAt).inDays;
+          matches = matches && daysDifference <= 7;
+        }
+
+        if (query.contains("this month")) {
+          matches = matches &&
+              item.createdAt.month == now.month &&
+              item.createdAt.year == now.year;
+        }
+
+        // LANGUAGE
         if (query.contains("arabic")) {
           matches = matches && language == "arabic";
         }
@@ -88,11 +146,12 @@ class _HistoryPageState extends State<HistoryPage> {
           matches = matches && language == "english";
         }
 
-        if (query.contains("true false")) {
+        // TYPE
+        if (query.contains("true false") || query.contains("tf")) {
           matches = matches && type.contains("true");
         }
 
-        if (query.contains("multiple choice")) {
+        if (query.contains("multiple choice") || query.contains("mcq")) {
           matches = matches && type.contains("multiple");
         }
 
@@ -100,6 +159,7 @@ class _HistoryPageState extends State<HistoryPage> {
           matches = matches && type.contains("both");
         }
 
+        // EXACT DATE
         if (RegExp(r'\d{1,2}/\d{1,2}/\d{4}').hasMatch(query)) {
           matches = matches && date.contains(query);
         }
@@ -112,15 +172,38 @@ class _HistoryPageState extends State<HistoryPage> {
         return matches &&
             (generalMatch ||
                 query.contains("hard") ||
+                query.contains("hardest") ||
+                query.contains("most difficult") ||
                 query.contains("easy") ||
+                query.contains("easiest") ||
+                query.contains("simple") ||
                 query.contains("medium") ||
+                query.contains("today") ||
+                query.contains("yesterday") ||
+                query.contains("this week") ||
+                query.contains("this month") ||
                 query.contains("arabic") ||
                 query.contains("english") ||
                 query.contains("true false") ||
+                query.contains("tf") ||
                 query.contains("multiple choice") ||
+                query.contains("mcq") ||
                 query.contains("both") ||
-                query.contains("most difficult"));
+                query.contains("latest") ||
+                query.contains("recent") ||
+                query.contains("oldest"));
       }).toList();
+
+      // SMART SORTING
+      if (query.contains("latest") || query.contains("recent")) {
+        results.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      }
+
+      if (query.contains("oldest")) {
+        results.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      }
+
+      filteredHistory = results;
     });
   }
 
@@ -154,9 +237,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
               if (newTitle.isNotEmpty) {
                 await FirestoreService().renameQuiz(item.id, newTitle);
-
                 if (!mounted) return;
-
                 Navigator.pop(context);
                 await loadHistory();
               }
